@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="ja" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>サムネ職人 - AI Hub</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Zen Kaku Gothic New', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            dark: {
+              900: '#0a0a0f',
+              800: '#12121a',
+              700: '#1a1a25',
+              600: '#252532',
+            },
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background: linear-gradient(135deg, #0a0a0f 0%, #12121a 50%, #0f0f18 100%);
+    }
+    .glass {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .nav-item {
+      position: relative;
+    }
+    .nav-item::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+      transition: width 0.3s ease;
+    }
+    .nav-item:hover::after,
+    .nav-item.active::after {
+      width: 100%;
+    }
+    .tag {
+      font-size: 0.65rem;
+      padding: 2px 8px;
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+<body class="min-h-screen text-white font-sans">
+  
+  <!-- Header -->
+  <header class="fixed top-0 left-0 right-0 z-50 glass">
+    <div class="max-w-7xl mx-auto px-6 py-4">
+      <div class="flex items-center justify-between">
+        <a href="index.html" class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+          </div>
+          <div>
+            <h1 class="font-bold text-lg tracking-tight">AI Hub</h1>
+            <p class="text-xs text-gray-500">SNS Club</p>
+          </div>
+        </a>
+        
+        <nav class="hidden md:flex items-center gap-8">
+          <a href="ideas.html" class="nav-item text-sm font-medium text-gray-300 hover:text-white transition-colors">💡 Ideas</a>
+          <a href="knowledge.html" class="nav-item text-sm font-medium text-gray-300 hover:text-white transition-colors">📚 Knowledge</a>
+          <a href="output.html" class="nav-item active text-sm font-medium text-green-400 transition-colors">🚀 Output</a>
+          <a href="news.html" class="nav-item text-sm font-medium text-gray-300 hover:text-white transition-colors">📰 News</a>
+        </nav>
+        
+        <div class="flex items-center gap-4">
+          <a href="post.html" class="px-4 py-2 text-sm font-medium rounded-lg bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 transition-all shadow-lg shadow-purple-500/25">
+            + 投稿する
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="pt-28 pb-16 px-6">
+    <div class="max-w-4xl mx-auto">
+      
+      <!-- Breadcrumb -->
+      <div class="flex items-center gap-2 text-sm text-gray-500 mb-6">
+        <a href="index.html" class="hover:text-white transition-colors">Home</a>
+        <span>/</span>
+        <a href="output.html" class="hover:text-white transition-colors">Output</a>
+        <span>/</span>
+        <span class="text-gray-400">サムネ職人</span>
+      </div>
+      
+      <!-- Header -->
+      <div class="glass rounded-2xl overflow-hidden mb-8">
+        <!-- Hero Image -->
+        <div class="h-64 bg-gradient-to-br from-blue-600/30 to-purple-600/30 flex items-center justify-center relative">
+          <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxjaXJjbGUgY3g9IjIwIiBjeT0iMjAiIHI9IjIiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4xKSIvPjwvZz48L3N2Zz4=')] opacity-50"></div>
+          <span class="text-8xl">🎨</span>
+        </div>
+        
+        <div class="p-8">
+          <div class="flex items-center gap-3 mb-4">
+            <span class="tag bg-blue-500/20 text-blue-400 text-sm px-3 py-1">🤖 GPTs</span>
+            <span class="tag bg-purple-500/20 text-purple-400 text-sm px-3 py-1">デザイン</span>
+          </div>
+          
+          <h1 class="text-3xl font-bold mb-4">サムネ職人</h1>
+          <p class="text-gray-400 mb-6">YouTubeサムネイルのアイデア出しから構成案まで提案。カラーパレットやフォント推奨も含めた総合サポートGPTs。</p>
+          
+          <div class="flex items-center gap-4 mb-6">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-full bg-gradient-to-br from-pink-400 to-purple-400"></div>
+              <div>
+                <p class="text-sm font-medium">田中さん</p>
+                <p class="text-xs text-gray-500">1週間前に公開</p>
+              </div>
+            </div>
+            <div class="text-sm text-gray-500">
+              <span>👥 48人が利用</span>
+            </div>
+          </div>
+          
+          <div class="flex items-center gap-4">
+            <a href="#" class="px-6 py-3 text-sm font-medium rounded-xl bg-gradient-to-r from-green-500 to-cyan-500 hover:from-green-600 hover:to-cyan-600 transition-all shadow-lg shadow-green-500/25 text-white">
+              🚀 ツールを使う
+            </a>
+            <button class="flex items-center gap-2 px-4 py-3 rounded-xl bg-white/5 text-gray-400 hover:bg-white/10 transition-colors">
+              <span>🔗</span>
+              <span class="text-sm">共有</span>
+            </button>
+            <button class="flex items-center gap-2 px-4 py-3 rounded-xl bg-white/5 text-gray-400 hover:bg-white/10 transition-colors">
+              <span>⭐</span>
+              <span class="text-sm">お気に入り</span>
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Content -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Main Content -->
+        <div class="lg:col-span-2 space-y-8">
+          
+          <!-- Description -->
+          <section class="glass rounded-2xl p-6">
+            <h2 class="text-lg font-bold mb-4 flex items-center gap-2">
+              <span>📝</span> 概要
+            </h2>
+            <div class="text-gray-300 leading-relaxed space-y-4">
+              <p>「サムネ職人」は、YouTubeサムネイルの企画から実装までをサポートするGPTsです。動画のタイトルや内容を入力するだけで、クリックされやすいサムネイルの構成案を提案します。</p>
+              
+              <h3 class="font-bold text-white pt-4">できること</h3>
+              <ul class="list-disc list-inside space-y-2 text-gray-400">
+                <li>動画内容に最適なサムネイル構成の提案</li>
+                <li>キャッチコピー・テキストの生成</li>
+                <li>カラーパレットの提案（競合との差別化考慮）</li>
+                <li>フォント・レイアウトの推奨</li>
+                <li>Canva/Figma向けの具体的な指示出し</li>
+                <li>A/Bテスト用の複数パターン生成</li>
+              </ul>
+              
+              <h3 class="font-bold text-white pt-4">使い方</h3>
+              <ol class="list-decimal list-inside space-y-2 text-gray-400">
+                <li>動画のタイトルと概要を入力</li>
+                <li>ターゲット視聴者層を指定</li>
+                <li>参考にしたいチャンネルがあれば共有</li>
+                <li>複数の構成案から選択</li>
+                <li>詳細な制作指示を出力</li>
+              </ol>
+            </div>
+          </section>
+          
+          <!-- Screenshots -->
+          <section class="glass rounded-2xl p-6">
+            <h2 class="text-lg font-bold mb-4 flex items-center gap-2">
+              <span>📸</span> スクリーンショット
+            </h2>
+            <div class="grid grid-cols-2 gap-4">
+              <div class="aspect-video rounded-xl bg-dark-700 flex items-center justify-center">
+                <span class="text-gray-500 text-sm">スクリーンショット 1</span>
+              </div>
+              <div class="aspect-video rounded-xl bg-dark-700 flex items-center justify-center">
+                <span class="text-gray-500 text-sm">スクリーンショット 2</span>
+              </div>
+              <div class="aspect-video rounded-xl bg-dark-700 flex items-center justify-center">
+                <span class="text-gray-500 text-sm">スクリーンショット 3</span>
+              </div>
+              <div class="aspect-video rounded-xl bg-dark-700 flex items-center justify-center">
+                <span class="text-gray-500 text-sm">スクリーンショット 4</span>
+              </div>
+            </div>
+          </section>
+          
+          <!-- Reviews -->
+          <section class="glass rounded-2xl p-6">
+            <h2 class="text-lg font-bold mb-6 flex items-center gap-2">
+              <span>⭐</span> レビュー (12)
+            </h2>
+            
+            <div class="flex items-center gap-6 mb-6 pb-6 border-b border-white/5">
+              <div class="text-center">
+                <div class="text-4xl font-bold text-white">4.8</div>
+                <div class="flex items-center gap-1 mt-1">
+                  <span class="text-yellow-400">★★★★★</span>
+                </div>
+                <p class="text-xs text-gray-500 mt-1">12件のレビュー</p>
+              </div>
+              <div class="flex-1 space-y-2">
+                <div class="flex items-center gap-2">
+                  <span class="text-xs text-gray-500 w-8">5 ★</span>
+                  <div class="flex-1 h-2 rounded-full bg-dark-600 overflow-hidden">
+                    <div class="h-full bg-yellow-400 rounded-full" style="width: 75%"></div>
+                  </div>
+                  <span class="text-xs text-gray-500 w-6">9</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="text-xs text-gray-500 w-8">4 ★</span>
+                  <div class="flex-1 h-2 rounded-full bg-dark-600 overflow-hidden">
+                    <div class="h-full bg-yellow-400 rounded-full" style="width: 17%"></div>
+                  </div>
+                  <span class="text-xs text-gray-500 w-6">2</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="text-xs text-gray-500 w-8">3 ★</span>
+                  <div class="flex-1 h-2 rounded-full bg-dark-600 overflow-hidden">
+                    <div class="h-full bg-yellow-400 rounded-full" style="width: 8%"></div>
+                  </div>
+                  <span class="text-xs text-gray-500 w-6">1</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="space-y-6">
+              
+              <!-- Review 1 -->
+              <div class="flex gap-4">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-green-400 to-cyan-400 flex-shrink-0"></div>
+                <div class="flex-1">
+                  <div class="flex items-center gap-2 mb-2">
+                    <span class="font-medium text-sm">佐藤さん</span>
+                    <span class="text-yellow-400 text-xs">★★★★★</span>
+                    <span class="text-xs text-gray-500">3日前</span>
+                  </div>
+                  <p class="text-gray-300 text-sm leading-relaxed">サムネ作成の時間が半分以下になりました！特にカラーパレットの提案が的確で、競合との差別化ができるようになったのが嬉しいです。</p>
+                </div>
+              </div>
+              
+              <!-- Review 2 -->
+              <div class="flex gap-4">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-yellow-400 to-orange-400 flex-shrink-0"></div>
+                <div class="flex-1">
+                  <div class="flex items-center gap-2 mb-2">
+                    <span class="font-medium text-sm">高橋さん</span>
+                    <span class="text-yellow-400 text-xs">★★★★☆</span>
+                    <span class="text-xs text-gray-500">1週間前</span>
+                  </div>
+                  <p class="text-gray-300 text-sm leading-relaxed">Canvaへの指示出しがそのまま使えて便利。たまに日本語フォントの提案がズレることがあるので、そこだけ改善希望。</p>
+                </div>
+              </div>
+              
+            </div>
+            
+            <!-- Write Review -->
+            <div class="mt-8 pt-6 border-t border-white/5">
+              <button class="w-full py-3 text-sm font-medium rounded-xl bg-white/5 hover:bg-white/10 transition-colors text-gray-400">
+                レビューを書く
+              </button>
+            </div>
+          </section>
+          
+        </div>
+        
+        <!-- Sidebar -->
+        <div class="space-y-6">
+          
+          <!-- Info -->
+          <div class="glass rounded-2xl p-6">
+            <h3 class="text-sm font-medium text-gray-400 mb-4">ツール情報</h3>
+            <div class="space-y-4">
+              <div class="flex items-center justify-between">
+                <span class="text-sm text-gray-500">種別</span>
+                <span class="text-sm text-white">GPTs</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-sm text-gray-500">利用者数</span>
+                <span class="text-sm text-white">48人</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-sm text-gray-500">評価</span>
+                <span class="text-sm text-yellow-400">★ 4.8</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-sm text-gray-500">公開日</span>
+                <span class="text-sm text-white">2026/01/01</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-sm text-gray-500">最終更新</span>
+                <span class="text-sm text-white">2026/01/05</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Creator -->
+          <div class="glass rounded-2xl p-6">
+            <h3 class="text-sm font-medium text-gray-400 mb-4">作成者</h3>
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 rounded-full bg-gradient-to-br from-pink-400 to-purple-400"></div>
+              <div>
+                <p class="font-medium">田中さん</p>
+                <p class="text-xs text-gray-500">デザインチーム</p>
+              </div>
+            </div>
+            <div class="mt-4 pt-4 border-t border-white/5">
+              <p class="text-xs text-gray-500">他の作品</p>
+              <div class="mt-2 space-y-2">
+                <a href="#" class="text-sm text-purple-400 hover:text-purple-300 block">バナー職人</a>
+                <a href="#" class="text-sm text-purple-400 hover:text-purple-300 block">ロゴアイデアくん</a>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Related -->
+          <div class="glass rounded-2xl p-6">
+            <h3 class="text-sm font-medium text-gray-400 mb-4">関連ツール</h3>
+            <div class="space-y-3">
+              <a href="#" class="block p-3 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors">
+                <p class="text-sm text-gray-300">競合ウォッチャー</p>
+                <p class="text-xs text-gray-500 mt-1">🚀 Output</p>
+              </a>
+              <a href="#" class="block p-3 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors">
+                <p class="text-sm text-gray-300">Midjourney商品写真プロンプト</p>
+                <p class="text-xs text-gray-500 mt-1">📚 Knowledge</p>
+              </a>
+            </div>
+          </div>
+          
+          <!-- Tags -->
+          <div class="glass rounded-2xl p-6">
+            <h3 class="text-sm font-medium text-gray-400 mb-4">タグ</h3>
+            <div class="flex flex-wrap gap-2">
+              <span class="px-3 py-1.5 rounded-lg bg-dark-700 text-gray-400 text-sm">#サムネイル</span>
+              <span class="px-3 py-1.5 rounded-lg bg-dark-700 text-gray-400 text-sm">#YouTube</span>
+              <span class="px-3 py-1.5 rounded-lg bg-dark-700 text-gray-400 text-sm">#デザイン</span>
+              <span class="px-3 py-1.5 rounded-lg bg-dark-700 text-gray-400 text-sm">#GPTs</span>
+            </div>
+          </div>
+          
+        </div>
+        
+      </div>
+      
+    </div>
+  </main>
+
+</body>
+</html>
+
