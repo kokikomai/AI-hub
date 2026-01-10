@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { Camera, Save, ArrowLeft } from 'lucide-react'
 import { getProfile, saveProfile, type MockProfile } from '@/lib/mockData'
+import { createClient } from '@/lib/supabase/client'
 import DepartmentSelect from '@/components/DepartmentSelect'
 
 export default function ProfilePage() {
@@ -11,6 +12,7 @@ export default function ProfilePage() {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [profile, setProfile] = useState<MockProfile | null>(null)
   const [name, setName] = useState('')
+  const [email, setEmail] = useState<string | null>(null)
   const [departments, setDepartments] = useState<string[]>([])
   const [staffCode, setStaffCode] = useState('')
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
@@ -18,16 +20,32 @@ export default function ProfilePage() {
   const [saved, setSaved] = useState(false)
 
   useEffect(() => {
-    const existingProfile = getProfile()
-    if (existingProfile) {
-      setProfile(existingProfile)
-      setName(existingProfile.name || '')
-      setDepartments(existingProfile.departments || [])
-      setStaffCode(existingProfile.staff_code || '')
-      setAvatarUrl(existingProfile.avatar_url)
-    } else {
-      setName('開発ユーザー')
+    const loadProfile = async () => {
+      const existingProfile = getProfile()
+      const supabase = createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+
+      if (existingProfile) {
+        setProfile(existingProfile)
+        // 既存プロフィールがあるが、名前やアバターが空の場合はGoogleアカウント情報で補完
+        setName(existingProfile.name || user?.user_metadata?.full_name || user?.user_metadata?.name || '開発ユーザー')
+        setDepartments(existingProfile.departments || [])
+        setStaffCode(existingProfile.staff_code || '')
+        setAvatarUrl(existingProfile.avatar_url || user?.user_metadata?.avatar_url || user?.user_metadata?.picture || null)
+        setEmail(existingProfile.email || user?.email || null)
+      } else if (user) {
+        // プロフィールがないがGoogleでログインしている場合、Googleの情報を初期値に
+        const googleName = user.user_metadata?.full_name || user.user_metadata?.name || user.email?.split('@')[0] || ''
+        const googleAvatar = user.user_metadata?.avatar_url || user.user_metadata?.picture || null
+        setName(googleName)
+        setAvatarUrl(googleAvatar)
+        setEmail(user.email || null)
+      } else {
+        setName('開発ユーザー')
+      }
     }
+
+    loadProfile()
   }, [])
 
   const handleImageClick = () => {
@@ -66,6 +84,7 @@ export default function ProfilePage() {
         departments,
         staff_code: staffCode || null,
         avatar_url: avatarUrl,
+        email,
         is_onboarded: true,
       })
       setSaved(true)
@@ -132,6 +151,20 @@ export default function ProfilePage() {
 
           {/* Form Section */}
           <div className="space-y-6">
+            {/* Email (read-only) */}
+            {email && (
+              <div>
+                <label
+                  className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
+                >
+                  メールアドレス
+                </label>
+                <div className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-600 dark:text-slate-400">
+                  {email}
+                </div>
+              </div>
+            )}
+
             <div>
               <label
                 htmlFor="name"

@@ -7,6 +7,8 @@
 
 | ID | Time | T | Title | Read |
 |----|------|---|-------|------|
+| #566 | 3:42 AM | 🔴 | Email field now persisted in profile save | ~225 |
+| #565 | 3:41 AM | 🟣 | Google OAuth profile auto-fill integration | ~405 |
 | #527 | 2:05 AM | 🟣 | Profile save updated to support multiple departments | ~260 |
 | #522 | 2:01 AM | 🟣 | Replaced department input with DepartmentSelect tag picker component | ~284 |
 | #517 | 1:57 AM | 🟣 | Profile page enhanced with department and staff ID fields | ~314 |
