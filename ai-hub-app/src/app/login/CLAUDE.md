@@ -7,6 +7,5 @@
 
 | ID | Time | T | Title | Read |
 |----|------|---|-------|------|
-| #570 | 3:45 AM | 🟣 | Implemented authentication middleware with Supabase session checking | ~355 |
-| #546 | 2:48 AM | ✅ | Disabled Supabase authentication middleware for mock data testing | ~280 |
+| #569 | 3:44 AM | ✅ | Simplified Google OAuth redirect to home page | ~221 |
 </claude-mem-context>

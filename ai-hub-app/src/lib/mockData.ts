@@ -100,6 +100,21 @@ export interface MockProfile {
   updated_at: string
 }
 
+export interface MockNotification {
+  id: string
+  user_id: string // 通知を受け取るユーザー
+  type: 'comment' | 'reply' // comment: 自分の投稿へのコメント, reply: 自分のコメントへの返信
+  content_type: string // ideas, knowledge, output, news
+  content_id: string
+  content_title: string
+  comment_id: string
+  from_user_name: string
+  from_user_avatar: string | null
+  message: string
+  is_read: boolean
+  created_at: string
+}
+
 // プロフィール取得
 export function getProfile(): MockProfile | null {
   if (typeof window === 'undefined') return null
@@ -446,6 +461,44 @@ export function addComment(comment: Omit<MockComment, 'id' | 'created_at' | 'pro
   // コメント数を更新
   updateCommentCount(comment.content_type, comment.content_id, 1)
 
+  // 通知を生成
+  const contentTitle = getContentTitle(comment.content_type, comment.content_id)
+  const contentTypePath = comment.content_type === 'idea' ? 'ideas' : comment.content_type
+
+  if (comment.parent_id) {
+    // 返信の場合：親コメントの投稿者に通知
+    const parentCommentOwnerId = getCommentOwnerId(comment.parent_id)
+    if (parentCommentOwnerId && parentCommentOwnerId !== comment.user_id) {
+      addNotification({
+        user_id: parentCommentOwnerId,
+        type: 'reply',
+        content_type: contentTypePath,
+        content_id: comment.content_id,
+        content_title: contentTitle,
+        comment_id: newComment.id,
+        from_user_name: userProfile.name,
+        from_user_avatar: userProfile.avatar_url,
+        message: comment.content.length > 50 ? comment.content.slice(0, 50) + '...' : comment.content,
+      })
+    }
+  } else {
+    // 新規コメントの場合：投稿者に通知
+    const contentOwnerId = getContentOwnerId(comment.content_type, comment.content_id)
+    if (contentOwnerId && contentOwnerId !== comment.user_id) {
+      addNotification({
+        user_id: contentOwnerId,
+        type: 'comment',
+        content_type: contentTypePath,
+        content_id: comment.content_id,
+        content_title: contentTitle,
+        comment_id: newComment.id,
+        from_user_name: userProfile.name,
+        from_user_avatar: userProfile.avatar_url,
+        message: comment.content.length > 50 ? comment.content.slice(0, 50) + '...' : comment.content,
+      })
+    }
+  }
+
   return newComment
 }
 
@@ -607,4 +660,89 @@ export function getOutputById(id: string): MockOutput | null {
 
 export function getNewsById(id: string): MockNews | null {
   return getNews().find(i => i.id === id) || null
+}
+
+// 通知関連
+export function getNotifications(userId: string): MockNotification[] {
+  const all = getFromStorage<MockNotification>('mockNotifications', [])
+  return all.filter(n => n.user_id === userId).sort((a, b) =>
+    new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+  )
+}
+
+export function getUnreadNotificationCount(userId: string): number {
+  const notifications = getNotifications(userId)
+  return notifications.filter(n => !n.is_read).length
+}
+
+export function markNotificationAsRead(notificationId: string): void {
+  const all = getFromStorage<MockNotification>('mockNotifications', [])
+  const notification = all.find(n => n.id === notificationId)
+  if (notification) {
+    notification.is_read = true
+    saveToStorage('mockNotifications', all)
+  }
+}
+
+export function markAllNotificationsAsRead(userId: string): void {
+  const all = getFromStorage<MockNotification>('mockNotifications', [])
+  all.forEach(n => {
+    if (n.user_id === userId) {
+      n.is_read = true
+    }
+  })
+  saveToStorage('mockNotifications', all)
+}
+
+export function addNotification(notification: Omit<MockNotification, 'id' | 'created_at' | 'is_read'>): MockNotification {
+  const notifications = getFromStorage<MockNotification>('mockNotifications', [])
+  const newNotification: MockNotification = {
+    ...notification,
+    id: Date.now().toString(),
+    is_read: false,
+    created_at: new Date().toISOString(),
+  }
+  notifications.unshift(newNotification)
+  saveToStorage('mockNotifications', notifications)
+  return newNotification
+}
+
+// コンテンツのタイトルを取得
+function getContentTitle(contentType: string, contentId: string): string {
+  switch (contentType) {
+    case 'idea':
+    case 'ideas':
+      return getIdeaById(contentId)?.title || '投稿'
+    case 'knowledge':
+      return getKnowledgeById(contentId)?.title || '投稿'
+    case 'output':
+      return getOutputById(contentId)?.title || '投稿'
+    case 'news':
+      return getNewsById(contentId)?.title || '投稿'
+    default:
+      return '投稿'
+  }
+}
+
+// コンテンツの投稿者IDを取得
+function getContentOwnerId(contentType: string, contentId: string): string | null {
+  switch (contentType) {
+    case 'idea':
+    case 'ideas':
+      return getIdeaById(contentId)?.user_id || null
+    case 'knowledge':
+      return getKnowledgeById(contentId)?.user_id || null
+    case 'output':
+      return getOutputById(contentId)?.user_id || null
+    case 'news':
+      return getNewsById(contentId)?.user_id || null
+    default:
+      return null
+  }
+}
+
+// コメント投稿者IDを取得
+function getCommentOwnerId(commentId: string): string | null {
+  const comments = getFromStorage<MockComment>('mockComments', [])
+  return comments.find(c => c.id === commentId)?.user_id || null
 }

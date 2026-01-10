@@ -7,6 +7,8 @@
 
 | ID | Time | T | Title | Read |
 |----|------|---|-------|------|
+| #575 | 3:48 AM | 🟣 | Added notification system state management to Header component | ~323 |
+| #574 | " | 🟣 | Added notification system imports to Header component | ~276 |
 | #523 | 2:04 AM | 🟣 | Multi-select department functionality implemented | ~392 |
 | #521 | 2:00 AM | 🟣 | DepartmentSelect component with autocomplete and dynamic addition | ~433 |
 | #511 | 1:55 AM | 🟣 | ShareButton component with native and social media sharing | ~332 |
