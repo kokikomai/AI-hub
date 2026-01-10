@@ -1,12 +1,12 @@
 'use client'
 
 import { useState, useEffect, Suspense } from 'react'
-import { useSearchParams, useRouter } from 'next/navigation'
 import Header from '@/components/Header'
 import Link from 'next/link'
 import { Lightbulb, BookOpen, Wrench, Newspaper, ArrowRight, Heart, MessageCircle } from 'lucide-react'
 import NetworkCanvas from '@/components/NetworkCanvas'
-import { getIdeas, getKnowledge, getOutputs, getNews, saveProfile, type MockIdea, type MockKnowledge, type MockOutput, type MockNews } from '@/lib/mockData'
+import { getIdeas, getKnowledge, getOutputs, getNews, saveProfile, getProfile, type MockIdea, type MockKnowledge, type MockOutput, type MockNews } from '@/lib/mockData'
+import { createClient } from '@/lib/supabase/client'
 
 const categories = [
   {
@@ -56,31 +56,57 @@ function HomePageContent() {
   const [knowledgeList, setKnowledgeList] = useState<MockKnowledge[]>([])
   const [outputs, setOutputs] = useState<MockOutput[]>([])
   const [newsList, setNewsList] = useState<MockNews[]>([])
-  const searchParams = useSearchParams()
-  const router = useRouter()
 
   useEffect(() => {
-    // Googleログイン後のユーザー情報を処理
-    const userInfo = searchParams.get('user_info')
-    if (userInfo) {
+    // Supabaseのセッションを確認してプロフィールを同期
+    const supabase = createClient()
+
+    const syncProfile = async () => {
       try {
-        const decoded = JSON.parse(atob(userInfo))
-        if (decoded.name || decoded.email || decoded.avatar_url) {
-          // プロフィールを保存
-          saveProfile({
-            name: decoded.name || decoded.email?.split('@')[0] || 'ユーザー',
-            avatar_url: decoded.avatar_url || null,
-            email: decoded.email || null,
-            is_onboarded: true,
-          })
+        const { data: { user } } = await supabase.auth.getUser()
+
+        if (user) {
+          const existingProfile = getProfile()
+
+          // まだプロフィールが設定されていない、または名前が違う場合は更新
+          if (!existingProfile || existingProfile.email !== user.email) {
+            const name = user.user_metadata?.full_name ||
+                        user.user_metadata?.name ||
+                        user.email?.split('@')[0] ||
+                        'ユーザー'
+            const avatarUrl = user.user_metadata?.avatar_url ||
+                             user.user_metadata?.picture ||
+                             null
+
+            saveProfile({
+              name,
+              avatar_url: avatarUrl,
+              email: user.email || null,
+              is_onboarded: true,
+            })
+
+            // ページをリロードしてヘッダーを更新
+            window.location.reload()
+          }
         }
-        // URLからuser_infoパラメータを削除
-        router.replace('/')
       } catch (e) {
-        console.error('Failed to parse user info:', e)
+        console.error('Failed to sync profile:', e)
       }
     }
-  }, [searchParams, router])
+
+    syncProfile()
+
+    // 認証状態の変更を監視
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' && session?.user) {
+        syncProfile()
+      }
+    })
+
+    return () => {
+      subscription.unsubscribe()
+    }
+  }, [])
 
   useEffect(() => {
     setIdeas(getIdeas().slice(0, 3))
