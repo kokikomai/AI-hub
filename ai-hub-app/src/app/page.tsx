@@ -1,11 +1,12 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
+import { useSearchParams, useRouter } from 'next/navigation'
 import Header from '@/components/Header'
 import Link from 'next/link'
 import { Lightbulb, BookOpen, Wrench, Newspaper, ArrowRight, Heart, MessageCircle } from 'lucide-react'
 import NetworkCanvas from '@/components/NetworkCanvas'
-import { getIdeas, getKnowledge, getOutputs, getNews, type MockIdea, type MockKnowledge, type MockOutput, type MockNews } from '@/lib/mockData'
+import { getIdeas, getKnowledge, getOutputs, getNews, saveProfile, type MockIdea, type MockKnowledge, type MockOutput, type MockNews } from '@/lib/mockData'
 
 const categories = [
   {
@@ -50,11 +51,36 @@ const categories = [
   },
 ]
 
-export default function HomePage() {
+function HomePageContent() {
   const [ideas, setIdeas] = useState<MockIdea[]>([])
   const [knowledgeList, setKnowledgeList] = useState<MockKnowledge[]>([])
   const [outputs, setOutputs] = useState<MockOutput[]>([])
   const [newsList, setNewsList] = useState<MockNews[]>([])
+  const searchParams = useSearchParams()
+  const router = useRouter()
+
+  useEffect(() => {
+    // Googleログイン後のユーザー情報を処理
+    const userInfo = searchParams.get('user_info')
+    if (userInfo) {
+      try {
+        const decoded = JSON.parse(atob(userInfo))
+        if (decoded.name || decoded.email || decoded.avatar_url) {
+          // プロフィールを保存
+          saveProfile({
+            name: decoded.name || decoded.email?.split('@')[0] || 'ユーザー',
+            avatar_url: decoded.avatar_url || null,
+            email: decoded.email || null,
+            is_onboarded: true,
+          })
+        }
+        // URLからuser_infoパラメータを削除
+        router.replace('/')
+      } catch (e) {
+        console.error('Failed to parse user info:', e)
+      }
+    }
+  }, [searchParams, router])
 
   useEffect(() => {
     setIdeas(getIdeas().slice(0, 3))
@@ -292,5 +318,17 @@ function EmptyState() {
     <div className="p-4 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 text-center">
       <p className="text-sm text-slate-500">まだ投稿がありません</p>
     </div>
+  )
+}
+
+export default function HomePage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-white dark:bg-slate-900 flex items-center justify-center">
+        <div className="text-slate-500">Loading...</div>
+      </div>
+    }>
+      <HomePageContent />
+    </Suspense>
   )
 }

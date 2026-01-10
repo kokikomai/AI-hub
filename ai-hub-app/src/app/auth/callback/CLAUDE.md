@@ -7,5 +7,6 @@
 
 | ID | Time | T | Title | Read |
 |----|------|---|-------|------|
-| #554 | 3:05 AM | 🟣 | Added Google OAuth callback handler to home page | ~377 |
+| #553 | 3:04 AM | 🔴 | Fixed auth callback route middleware error with improved redirect handling | ~446 |
+| #551 | 3:01 AM | 🟣 | Enhanced Supabase auth callback with Vercel deployment support | ~410 |
 </claude-mem-context>
