@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, Suspense } from 'react'
+import { useSearchParams, useRouter } from 'next/navigation'
 import Header from '@/components/Header'
 import Link from 'next/link'
 import { Lightbulb, BookOpen, Wrench, Newspaper, ArrowRight, Heart, MessageCircle } from 'lucide-react'
@@ -56,10 +57,24 @@ function HomePageContent() {
   const [knowledgeList, setKnowledgeList] = useState<MockKnowledge[]>([])
   const [outputs, setOutputs] = useState<MockOutput[]>([])
   const [newsList, setNewsList] = useState<MockNews[]>([])
+  const searchParams = useSearchParams()
+  const router = useRouter()
 
   useEffect(() => {
-    // Supabaseのセッションを確認してプロフィールを同期
     const supabase = createClient()
+
+    // URLにcodeパラメータがある場合、セッションを交換
+    const code = searchParams.get('code')
+    if (code) {
+      supabase.auth.exchangeCodeForSession(code).then(({ error }) => {
+        if (error) {
+          console.error('Failed to exchange code:', error)
+        }
+        // URLからcodeパラメータを削除
+        router.replace('/', { scroll: false })
+      })
+      return
+    }
 
     const syncProfile = async () => {
       try {
@@ -106,7 +121,7 @@ function HomePageContent() {
     return () => {
       subscription.unsubscribe()
     }
-  }, [])
+  }, [searchParams, router])
 
   useEffect(() => {
     setIdeas(getIdeas().slice(0, 3))
