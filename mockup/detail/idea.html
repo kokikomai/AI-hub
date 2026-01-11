@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>アイデア詳細 - AI Hub</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Noto Sans JP', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+        }
+      }
+    }
+  </script>
+  <style>
+    :root {
+      --bg-primary: #ffffff;
+      --bg-secondary: #f8f9fa;
+      --bg-tertiary: #f1f3f5;
+      --bg-card: #ffffff;
+      --bg-hover: #f8f9fa;
+      --bg-input: #ffffff;
+      --border-primary: #e9ecef;
+      --border-secondary: #dee2e6;
+      --text-primary: #212529;
+      --text-secondary: #495057;
+      --text-muted: #868e96;
+      --accent-blue: #228be6;
+      --accent-purple: #7950f2;
+      --accent-green: #12b886;
+      --accent-orange: #fd7e14;
+      --accent-red: #fa5252;
+      --accent-yellow: #fab005;
+      --shadow: rgba(0, 0, 0, 0.08);
+    }
+
+    [data-theme="dark"] {
+      --bg-primary: #1a1b1e;
+      --bg-secondary: #25262b;
+      --bg-tertiary: #2c2e33;
+      --bg-card: #25262b;
+      --bg-hover: #2c2e33;
+      --bg-input: #2c2e33;
+      --border-primary: #373a40;
+      --border-secondary: #495057;
+      --text-primary: #f8f9fa;
+      --text-secondary: #ced4da;
+      --text-muted: #868e96;
+      --accent-blue: #339af0;
+      --accent-purple: #9775fa;
+      --accent-green: #20c997;
+      --accent-orange: #ffa94d;
+      --accent-red: #ff6b6b;
+      --accent-yellow: #fcc419;
+      --shadow: rgba(0, 0, 0, 0.3);
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-primary);
+    }
+
+    .input-field {
+      background-color: var(--bg-input);
+      border: 1px solid var(--border-primary);
+      color: var(--text-primary);
+    }
+
+    .tag {
+      font-size: 0.7rem;
+      padding: 3px 10px;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+
+    .btn-primary {
+      background-color: var(--accent-yellow);
+      color: #1a1b1e;
+      transition: all 0.2s ease;
+    }
+    .btn-primary:hover {
+      filter: brightness(1.1);
+    }
+
+    .btn-secondary {
+      background-color: var(--bg-tertiary);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-primary);
+      transition: all 0.2s ease;
+    }
+    .btn-secondary:hover {
+      background-color: var(--bg-hover);
+    }
+  </style>
+</head>
+<body class="font-sans min-h-screen">
+
+  <!-- Header -->
+  <header class="sticky top-0 z-50 backdrop-blur-xl border-b" style="background-color: var(--bg-primary); border-color: var(--border-primary);">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="../index.html" class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+          </div>
+          <div>
+            <h1 class="font-bold text-lg" style="color: var(--text-primary);">AI Hub</h1>
+            <p class="text-xs" style="color: var(--text-muted);">SNS Club</p>
+          </div>
+        </a>
+      </div>
+      
+      <!-- Navigation -->
+      <nav class="hidden md:flex items-center gap-8">
+        <a href="../pages/ideas.html" class="text-sm font-medium transition-colors hover:opacity-80" style="color: var(--accent-yellow);">
+          <span class="flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+            </svg>
+            Ideas
+          </span>
+        </a>
+        <a href="../pages/knowledge.html" class="text-sm font-medium transition-colors hover:opacity-80" style="color: var(--text-secondary);">
+          <span class="flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+            </svg>
+            Knowledge
+          </span>
+        </a>
+        <a href="../pages/output.html" class="text-sm font-medium transition-colors hover:opacity-80" style="color: var(--text-secondary);">
+          <span class="flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
+            </svg>
+            Output
+          </span>
+        </a>
+        <a href="../pages/news.html" class="text-sm font-medium transition-colors hover:opacity-80" style="color: var(--text-secondary);">
+          <span class="flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/>
+            </svg>
+            News
+          </span>
+        </a>
+      </nav>
+      
+      <!-- Actions -->
+      <div class="flex items-center gap-4">
+        <button onclick="toggleTheme()" class="flex items-center gap-2 px-3 py-1.5 rounded-lg transition-colors" style="background-color: var(--bg-tertiary);">
+          <svg id="theme-icon-light" class="w-4 h-4" style="color: var(--text-secondary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+          </svg>
+          <svg id="theme-icon-dark" class="w-4 h-4 hidden" style="color: var(--text-secondary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-5xl mx-auto px-6 py-8">
+    <!-- Breadcrumb -->
+    <nav class="mb-6">
+      <ol class="flex items-center gap-2 text-sm" style="color: var(--text-muted);">
+        <li><a href="../index.html" class="hover:underline">ホーム</a></li>
+        <li>/</li>
+        <li><a href="../pages/ideas.html" class="hover:underline">Ideas</a></li>
+        <li>/</li>
+        <li style="color: var(--text-primary);">社内FAQ自動回答ボット</li>
+      </ol>
+    </nav>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Main Content -->
+      <div class="lg:col-span-2">
+        <!-- Hero Image -->
+        <div class="card rounded-2xl overflow-hidden mb-6">
+          <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&h=400&fit=crop" alt="Idea Image" class="w-full h-64 object-cover">
+        </div>
+
+        <!-- Title & Meta -->
+        <div class="mb-6">
+          <div class="flex items-center gap-3 mb-4">
+            <span class="tag flex items-center gap-1" style="background-color: rgba(250, 176, 5, 0.15); color: var(--accent-yellow);">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+              検討中
+            </span>
+            <span class="tag" style="background-color: var(--bg-tertiary); color: var(--text-muted);">業務効率化</span>
+            <span class="tag" style="background-color: var(--bg-tertiary); color: var(--text-muted);">AI</span>
+          </div>
+          <h1 class="text-3xl font-bold mb-4" style="color: var(--text-primary);">社内FAQ自動回答ボット</h1>
+          <div class="flex items-center gap-4">
+            <div class="flex items-center gap-2">
+              <div class="w-10 h-10 rounded-full bg-gradient-to-br from-pink-400 to-purple-500"></div>
+              <div>
+                <p class="font-medium" style="color: var(--text-primary);">田中さん</p>
+                <p class="text-sm" style="color: var(--text-muted);">3日前に投稿</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="card rounded-2xl p-6 mb-6">
+          <h2 class="font-bold text-lg mb-4" style="color: var(--text-primary);">概要</h2>
+          <div class="prose" style="color: var(--text-secondary);">
+            <p class="mb-4">Slackに投稿された質問をAIが自動判定し、過去のナレッジから最適な回答を返すボットを作りたいと考えています。</p>
+            <h3 class="font-semibold mt-6 mb-2" style="color: var(--text-primary);">背景・課題</h3>
+            <ul class="list-disc list-inside space-y-2 mb-4">
+              <li>同じ質問が何度も繰り返されている</li>
+              <li>回答者の負担が大きい</li>
+              <li>過去の回答が埋もれて見つからない</li>
+            </ul>
+            <h3 class="font-semibold mt-6 mb-2" style="color: var(--text-primary);">提案する解決策</h3>
+            <p class="mb-4">RAG（Retrieval-Augmented Generation）を使用して、社内ドキュメントやSlackの過去の投稿から関連情報を取得し、AIが適切な回答を生成するボットを開発します。</p>
+            <h3 class="font-semibold mt-6 mb-2" style="color: var(--text-primary);">期待される効果</h3>
+            <ul class="list-disc list-inside space-y-2">
+              <li>質問への即座の回答で業務効率アップ</li>
+              <li>回答者の負担軽減</li>
+              <li>ナレッジの有効活用</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Comments -->
+        <div class="card rounded-2xl p-6">
+          <h2 class="font-bold text-lg mb-4" style="color: var(--text-primary);">コメント (3)</h2>
+          
+          <!-- Comment Form -->
+          <div class="mb-6">
+            <textarea class="input-field w-full rounded-lg p-4 text-sm resize-none" rows="3" placeholder="コメントを入力..."></textarea>
+            <div class="flex justify-end mt-2">
+              <button class="btn-primary px-4 py-2 rounded-lg font-medium text-sm">送信</button>
+            </div>
+          </div>
+
+          <!-- Comment List -->
+          <div class="space-y-4">
+            <div class="flex gap-3 p-4 rounded-xl" style="background-color: var(--bg-secondary);">
+              <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-cyan-500 flex-shrink-0"></div>
+              <div class="flex-1">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="font-medium text-sm" style="color: var(--text-primary);">佐藤さん</span>
+                  <span class="text-xs" style="color: var(--text-muted);">2日前</span>
+                </div>
+                <p class="text-sm" style="color: var(--text-secondary);">これは良いアイデアですね！Slack連携の部分、一緒に開発しませんか？</p>
+              </div>
+            </div>
+            
+            <div class="flex gap-3 p-4 rounded-xl" style="background-color: var(--bg-secondary);">
+              <div class="w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-emerald-500 flex-shrink-0"></div>
+              <div class="flex-1">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="font-medium text-sm" style="color: var(--text-primary);">山田さん</span>
+                  <span class="text-xs" style="color: var(--text-muted);">1日前</span>
+                </div>
+                <p class="text-sm" style="color: var(--text-secondary);">RAGの精度が気になります。どのくらいの精度を目指していますか？</p>
+              </div>
+            </div>
+
+            <div class="flex gap-3 p-4 rounded-xl" style="background-color: var(--bg-secondary);">
+              <div class="w-8 h-8 rounded-full bg-gradient-to-br from-pink-400 to-purple-500 flex-shrink-0"></div>
+              <div class="flex-1">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="font-medium text-sm" style="color: var(--text-primary);">田中さん</span>
+                  <span class="text-xs" style="color: var(--text-muted);">投稿者</span>
+                  <span class="text-xs" style="color: var(--text-muted);">12時間前</span>
+                </div>
+                <p class="text-sm" style="color: var(--text-secondary);">@佐藤さん ぜひお願いします！@山田さん まずは80%以上の回答率を目指したいと思っています。</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="lg:col-span-1">
+        <!-- Actions -->
+        <div class="card rounded-2xl p-6 mb-6">
+          <div class="space-y-3">
+            <button class="btn-primary w-full py-3 rounded-lg font-medium flex items-center justify-center gap-2">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+              </svg>
+              一緒に作りたい
+            </button>
+            <button class="btn-secondary w-full py-3 rounded-lg font-medium flex items-center justify-center gap-2">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+              </svg>
+              いいね (8)
+            </button>
+            <button class="btn-secondary w-full py-3 rounded-lg font-medium flex items-center justify-center gap-2">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
+              </svg>
+              ウォッチリストに追加
+            </button>
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="card rounded-2xl p-6 mb-6">
+          <h3 class="font-bold text-sm mb-4" style="color: var(--text-primary);">統計</h3>
+          <div class="space-y-3">
+            <div class="flex justify-between">
+              <span class="text-sm" style="color: var(--text-muted);">閲覧数</span>
+              <span class="font-medium" style="color: var(--text-primary);">142</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-sm" style="color: var(--text-muted);">いいね</span>
+              <span class="font-medium" style="color: var(--text-primary);">8</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-sm" style="color: var(--text-muted);">コメント</span>
+              <span class="font-medium" style="color: var(--text-primary);">3</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-sm" style="color: var(--text-muted);">参加希望</span>
+              <span class="font-medium" style="color: var(--text-primary);">2人</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Related Ideas -->
+        <div class="card rounded-2xl p-6">
+          <h3 class="font-bold text-sm mb-4" style="color: var(--text-primary);">関連するアイデア</h3>
+          <div class="space-y-3">
+            <a href="detail-idea.html" class="block p-3 rounded-lg transition-colors hover:opacity-80" style="background-color: var(--bg-secondary);">
+              <p class="font-medium text-sm mb-1" style="color: var(--text-primary);">議事録AI自動生成ツール</p>
+              <p class="text-xs" style="color: var(--text-muted);">業務効率化 • 6いいね</p>
+            </a>
+            <a href="detail-idea.html" class="block p-3 rounded-lg transition-colors hover:opacity-80" style="background-color: var(--bg-secondary);">
+              <p class="font-medium text-sm mb-1" style="color: var(--text-primary);">チャットボットの改善</p>
+              <p class="text-xs" style="color: var(--text-muted);">カスタマーサポート • 4いいね</p>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t py-8 px-6" style="border-color: var(--border-primary);">
+    <div class="max-w-7xl mx-auto text-center">
+      <p class="text-sm" style="color: var(--text-muted);">© 2026 AI Hub - SNS Club. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Theme Toggle
+    function toggleTheme() {
+      const html = document.documentElement;
+      const currentTheme = html.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', newTheme);
+      localStorage.setItem('ai-hub-theme', newTheme);
+      updateThemeIcon(newTheme);
+    }
+
+    function updateThemeIcon(theme) {
+      const lightIcon = document.getElementById('theme-icon-light');
+      const darkIcon = document.getElementById('theme-icon-dark');
+      if (theme === 'dark') {
+        lightIcon.classList.add('hidden');
+        darkIcon.classList.remove('hidden');
+      } else {
+        lightIcon.classList.remove('hidden');
+        darkIcon.classList.add('hidden');
+      }
+    }
+
+    // Initialize theme
+    document.addEventListener('DOMContentLoaded', () => {
+      const savedTheme = localStorage.getItem('ai-hub-theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+      updateThemeIcon(savedTheme);
+    });
+  </script>
+</body>
+</html>
+

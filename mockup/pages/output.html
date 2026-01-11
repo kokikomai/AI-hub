@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Output Gallery - AI Hub</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Noto Sans JP', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+        }
+      }
+    }
+  </script>
+  <style>
+    :root {
+      --bg-primary: #ffffff;
+      --bg-secondary: #f8f9fa;
+      --bg-tertiary: #f1f3f5;
+      --bg-card: #ffffff;
+      --bg-hover: #f8f9fa;
+      --bg-input: #ffffff;
+      --border-primary: #e9ecef;
+      --border-secondary: #dee2e6;
+      --text-primary: #212529;
+      --text-secondary: #495057;
+      --text-muted: #868e96;
+      --accent-blue: #228be6;
+      --accent-purple: #7950f2;
+      --accent-green: #12b886;
+      --accent-orange: #fd7e14;
+      --accent-red: #fa5252;
+      --accent-yellow: #fab005;
+      --accent-cyan: #15aabf;
+      --accent-pink: #e64980;
+      --shadow: rgba(0, 0, 0, 0.08);
+      --node-color: rgba(18, 184, 134, 0.4);
+      --line-color: rgba(18, 184, 134, 0.15);
+    }
+
+    [data-theme="dark"] {
+      --bg-primary: #1a1b1e;
+      --bg-secondary: #25262b;
+      --bg-tertiary: #2c2e33;
+      --bg-card: #25262b;
+      --bg-hover: #2c2e33;
+      --bg-input: #2c2e33;
+      --border-primary: #373a40;
+      --border-secondary: #495057;
+      --text-primary: #f8f9fa;
+      --text-secondary: #ced4da;
+      --text-muted: #868e96;
+      --accent-blue: #339af0;
+      --accent-purple: #9775fa;
+      --accent-green: #20c997;
+      --accent-orange: #ffa94d;
+      --accent-red: #ff6b6b;
+      --accent-yellow: #fcc419;
+      --accent-cyan: #22b8cf;
+      --accent-pink: #f783ac;
+      --shadow: rgba(0, 0, 0, 0.3);
+      --node-color: rgba(20, 184, 134, 0.5);
+      --line-color: rgba(20, 184, 134, 0.12);
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .hero-section {
+      position: relative;
+      background-color: var(--bg-secondary);
+      overflow: hidden;
+    }
+
+    #network-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0.6;
+    }
+
+    [data-theme="dark"] #network-canvas {
+      opacity: 0.4;
+    }
+
+    .card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-primary);
+      transition: all 0.3s ease;
+    }
+    .card:hover {
+      border-color: var(--border-secondary);
+      box-shadow: 0 8px 30px var(--shadow);
+      transform: translateY(-4px);
+    }
+
+    .input-field {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-primary);
+      color: var(--text-primary);
+    }
+
+    .tag {
+      font-size: 0.7rem;
+      padding: 3px 10px;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+
+    .gallery-image {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 16px 16px 0 0;
+    }
+
+    .tool-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  </style>
+</head>
+<body class="min-h-screen font-sans">
+
+  <!-- Header -->
+  <header class="fixed top-0 left-0 right-0 z-50 border-b" style="background-color: var(--bg-primary); border-color: var(--border-primary);">
+    <div class="max-w-7xl mx-auto px-6 py-3">
+      <div class="flex items-center justify-between">
+        <a href="../index.html" class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-violet-600 flex items-center justify-center shadow-lg">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+          </div>
+          <div>
+            <h1 class="font-bold text-lg" style="color: var(--text-primary);">AI Hub</h1>
+            <p class="text-xs" style="color: var(--text-muted);">SNS Club</p>
+          </div>
+        </a>
+
+        <nav class="hidden md:flex items-center gap-8">
+          <a href="ideas.html" class="text-sm font-medium transition-colors hover:opacity-80" style="color: var(--text-secondary);">
+            <span class="flex items-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+              </svg>
+              Ideas
+            </span>
+          </a>
+          <a href="knowledge.html" class="text-sm font-medium transition-colors hover:opacity-80" style="color: var(--text-secondary);">
+            <span class="flex items-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+              </svg>
+              Knowledge
+            </span>
+          </a>
+          <a href="output.html" class="text-sm font-medium transition-colors" style="color: var(--accent-green);">
+            <span class="flex items-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
+              </svg>
+              Output
+            </span>
+          </a>
+          <a href="news.html" class="text-sm font-medium transition-colors hover:opacity-80" style="color: var(--text-secondary);">
+            <span class="flex items-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/>
+              </svg>
+              News
+            </span>
+          </a>
+        </nav>
+
+        <div class="flex items-center gap-4">
+          <!-- Theme Toggle -->
+          <button onclick="toggleTheme()" class="flex items-center gap-2 px-3 py-1.5 rounded-lg transition-colors" style="background-color: var(--bg-tertiary);">
+            <svg id="theme-icon-light" class="w-4 h-4" style="color: var(--text-secondary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+            </svg>
+            <svg id="theme-icon-dark" class="w-4 h-4 hidden" style="color: var(--text-secondary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+            </svg>
+            <span id="theme-text" class="text-xs font-medium" style="color: var(--text-secondary);">Light</span>
+          </button>
+
+          <a href="post.html?type=output" class="px-4 py-2 text-sm font-medium rounded-lg text-white transition-colors" style="background-color: var(--accent-green);">
+            <span class="flex items-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+              </svg>
+              投稿する
+            </span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section with Network Pattern Background -->
+  <section class="hero-section pt-28 pb-20 px-6 relative">
+    <!-- Network Canvas - 点と線のネットワーク -->
+    <canvas id="network-canvas"></canvas>
+
+    <div class="max-w-4xl mx-auto text-center relative z-10">
+      <div class="flex items-center gap-4 mb-6 justify-center">
+        <div class="icon-box" style="background: linear-gradient(135deg, #12b886 0%, #38d9a9 100%);">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
+          </svg>
+        </div>
+        <div>
+          <h2 class="text-3xl font-bold" style="color: var(--accent-green);">Output Gallery</h2>
+          <p class="text-sm" style="color: var(--text-secondary);">完成したAIツール、GPTs、エージェントのショーケース</p>
+        </div>
+      </div>
+
+      <!-- Search Bar -->
+      <div class="max-w-2xl mx-auto">
+        <div class="input-field rounded-xl px-5 py-3.5 flex items-center gap-4 transition-all shadow-lg">
+          <svg class="w-5 h-5" style="color: var(--text-muted);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+          <input type="text" placeholder="ツールを検索..." class="flex-1 bg-transparent outline-none text-sm" style="color: var(--text-primary);">
+          <span class="text-xs px-2 py-1 rounded" style="background-color: var(--bg-tertiary); color: var(--text-muted);">⌘K</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Filters & Stats -->
+  <section class="py-6 px-6 border-b" style="border-color: var(--border-primary);">
+    <div class="max-w-7xl mx-auto">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center gap-3 overflow-x-auto">
+          <button class="px-4 py-2 text-xs font-medium rounded-lg whitespace-nowrap" style="background-color: rgba(18, 184, 134, 0.15); color: var(--accent-green);">すべて</button>
+          <button class="px-4 py-2 text-xs font-medium rounded-lg whitespace-nowrap flex items-center gap-1" style="background-color: var(--bg-tertiary); color: var(--text-muted);">
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+            </svg>
+            GPTs
+          </button>
+          <button class="px-4 py-2 text-xs font-medium rounded-lg whitespace-nowrap flex items-center gap-1" style="background-color: var(--bg-tertiary); color: var(--text-muted);">
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+            Dify
+          </button>
+          <button class="px-4 py-2 text-xs font-medium rounded-lg whitespace-nowrap flex items-center gap-1" style="background-color: var(--bg-tertiary); color: var(--text-muted);">
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14v6m-3-3h6M6 10h2a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2zm10 0h2a2 2 0 002-2V6a2 2 0 00-2-2h-2a2 2 0 00-2 2v2a2 2 0 002 2zM6 20h2a2 2 0 002-2v-2a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2z"/>
+            </svg>
+            Chrome拡張
+          </button>
+          <button class="px-4 py-2 text-xs font-medium rounded-lg whitespace-nowrap flex items-center gap-1" style="background-color: var(--bg-tertiary); color: var(--text-muted);">
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
+            </svg>
+            Webツール
+          </button>
+        </div>
+        <div class="flex items-center gap-3">
+          <!-- View Toggle Buttons -->
+          <div class="flex items-center gap-1 p-1 rounded-lg" style="background-color: var(--bg-tertiary);">
+            <button class="view-btn active" id="gallery-view-btn" onclick="setView('gallery')" style="padding: 6px 10px; border-radius: 6px; background-color: var(--accent-green); color: white;">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+              </svg>
+            </button>
+            <button class="view-btn" id="list-view-btn" onclick="setView('list')" style="padding: 6px 10px; border-radius: 6px;">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
+              </svg>
+            </button>
+          </div>
+          <select class="input-field rounded-lg px-4 py-2 text-sm outline-none cursor-pointer" style="color: var(--text-secondary);">
+            <option value="latest">新着順</option>
+            <option value="popular">人気順</option>
+            <option value="users">利用者順</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Output Gallery Grid -->
+  <section class="py-8 px-6" id="gallery-view">
+    <div class="max-w-7xl mx-auto">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        <!-- Output Card 1 -->
+        <a href="../detail/output.html" class="card rounded-2xl overflow-hidden cursor-pointer block">
+          <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=400&h=200&fit=crop"
+               alt="AI dashboard" class="gallery-image">
+          <div class="p-6">
+            <div class="flex items-center gap-2 mb-3">
+              <span class="tag flex items-center gap-1" style="background-color: rgba(34, 139, 230, 0.15); color: var(--accent-blue);">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                </svg>
+                GPTs
+              </span>
+              <span class="tag" style="background-color: rgba(121, 80, 242, 0.15); color: var(--accent-purple);">デザイン</span>
+            </div>
+            <h4 class="font-bold text-lg mb-2" style="color: var(--text-primary);">サムネ職人</h4>
+            <p class="text-sm mb-4 line-clamp-2" style="color: var(--text-secondary);">YouTubeサムネイルのアイデア出しから構成案まで提案。カラーパレットやフォント推奨も。</p>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="w-7 h-7 rounded-full bg-gradient-to-br from-pink-400 to-purple-500"></div>
+                <span class="text-sm" style="color: var(--text-muted);">田中さん</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="text-xs flex items-center gap-1" style="color: var(--text-muted);">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                  </svg>
+                  48人利用
+                </span>
+                <button class="text-xs font-medium flex items-center gap-1" style="color: var(--accent-green);">
+                  使う
+                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </a>
+
+        <!-- Output Card 2 -->
+        <a href="../detail/output.html" class="card rounded-2xl overflow-hidden cursor-pointer block">
+          <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=400&h=200&fit=crop"
+               alt="Data analysis" class="gallery-image">
+          <div class="p-6">
+            <div class="flex items-center gap-2 mb-3">
+              <span class="tag flex items-center gap-1" style="background-color: rgba(18, 184, 134, 0.15); color: var(--accent-green);">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                </svg>
+                Dify
+              </span>
+              <span class="tag" style="background-color: rgba(253, 126, 20, 0.15); color: var(--accent-orange);">分析</span>
+            </div>
+            <h4 class="font-bold text-lg mb-2" style="color: var(--text-primary);">競合ウォッチャー</h4>
+            <p class="text-sm mb-4 line-clamp-2" style="color: var(--text-secondary);">競合のSNS投稿を定期的に収集し、トレンドを分析。週次レポートを自動生成。</p>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="w-7 h-7 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500"></div>
+                <span class="text-sm" style="color: var(--text-muted);">高橋さん</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="text-xs flex items-center gap-1" style="color: var(--text-muted);">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                  </svg>
+                  23人利用
+                </span>
+                <button class="text-xs font-medium flex items-center gap-1" style="color: var(--accent-green);">
+                  使う
+                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </a>
+
+        <!-- Output Card 3 -->
+        <a href="../detail/output.html" class="card rounded-2xl overflow-hidden cursor-pointer block">
+          <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=400&h=200&fit=crop"
+               alt="Browser extension" class="gallery-image">
+          <div class="p-6">
+            <div class="flex items-center gap-2 mb-3">
+              <span class="tag flex items-center gap-1" style="background-color: rgba(253, 126, 20, 0.15); color: var(--accent-orange);">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14v6m-3-3h6M6 10h2a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2zm10 0h2a2 2 0 002-2V6a2 2 0 00-2-2h-2a2 2 0 00-2 2v2a2 2 0 002 2zM6 20h2a2 2 0 002-2v-2a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2z"/>
+                </svg>
+                Chrome拡張
+              </span>
+              <span class="tag" style="background-color: rgba(230, 73, 128, 0.15); color: var(--accent-pink);">ライティング</span>
+            </div>
+            <h4 class="font-bold text-lg mb-2" style="color: var(--text-primary);">リライトアシスト</h4>
+            <p class="text-sm mb-4 line-clamp-2" style="color: var(--text-secondary);">選択したテキストを右クリックでリライト候補を表示。トーン調整も可能。</p>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="w-7 h-7 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500"></div>
+                <span class="text-sm" style="color: var(--text-muted);">山田さん</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="text-xs flex items-center gap-1" style="color: var(--text-muted);">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                  </svg>
+                  67人利用
+                </span>
+                <button class="text-xs font-medium flex items-center gap-1" style="color: var(--accent-green);">
+                  使う
+                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </a>
+
+        <!-- Output Card 4 -->
+        <a href="../detail/output.html" class="card rounded-2xl overflow-hidden cursor-pointer block">
+          <img src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=400&h=200&fit=crop"
+               alt="AI meeting tool" class="gallery-image">
+          <div class="p-6">
+            <div class="flex items-center gap-2 mb-3">
+              <span class="tag flex items-center gap-1" style="background-color: rgba(34, 139, 230, 0.15); color: var(--accent-blue);">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                </svg>
+                GPTs
+              </span>
+              <span class="tag" style="background-color: rgba(18, 184, 134, 0.15); color: var(--accent-green);">業務効率化</span>
+            </div>
+            <h4 class="font-bold text-lg mb-2" style="color: var(--text-primary);">議事録まとめくん</h4>
+            <p class="text-sm mb-4 line-clamp-2" style="color: var(--text-secondary);">会議の文字起こしを入れると、要点・決定事項・TODOを自動抽出。Slack連携も可能。</p>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="w-7 h-7 rounded-full bg-gradient-to-br from-orange-400 to-red-500"></div>
+                <span class="text-sm" style="color: var(--text-muted);">鈴木さん</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="text-xs flex items-center gap-1" style="color: var(--text-muted);">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                  </svg>
+                  89人利用
+                </span>
+                <button class="text-xs font-medium flex items-center gap-1" style="color: var(--accent-green);">
+                  使う
+                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </a>
+
+        <!-- Output Card 5 -->
+        <a href="../detail/output.html" class="card rounded-2xl overflow-hidden cursor-pointer block">
+          <img src="https://images.unsplash.com/photo-1614064641938-3bbee52942c7?w=400&h=200&fit=crop"
+               alt="Email automation" class="gallery-image">
+          <div class="p-6">
+            <div class="flex items-center gap-2 mb-3">
+              <span class="tag flex items-center gap-1" style="background-color: rgba(18, 184, 134, 0.15); color: var(--accent-green);">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                </svg>
+                Dify
+              </span>
+              <span class="tag" style="background-color: rgba(34, 139, 230, 0.15); color: var(--accent-blue);">自動化</span>
+            </div>
+            <h4 class="font-bold text-lg mb-2" style="color: var(--text-primary);">メール仕分けAI</h4>
+            <p class="text-sm mb-4 line-clamp-2" style="color: var(--text-secondary);">受信メールを自動で分類し、優先度と担当者を振り分けるAI。緊急度の高いものはSlack通知。</p>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="w-7 h-7 rounded-full bg-gradient-to-br from-green-400 to-teal-500"></div>
+                <span class="text-sm" style="color: var(--text-muted);">中村さん</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="text-xs flex items-center gap-1" style="color: var(--text-muted);">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                  </svg>
+                  34人利用
+                </span>
+                <button class="text-xs font-medium flex items-center gap-1" style="color: var(--accent-green);">
+                  使う
+                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </a>
+
+        <!-- Output Card 6 -->
+        <a href="../detail/output.html" class="card rounded-2xl overflow-hidden cursor-pointer block">
+          <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=400&h=200&fit=crop"
+               alt="SEO tool" class="gallery-image">
+          <div class="p-6">
+            <div class="flex items-center gap-2 mb-3">
+              <span class="tag flex items-center gap-1" style="background-color: rgba(250, 176, 5, 0.15); color: var(--accent-yellow);">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
+                </svg>
+                Webツール
+              </span>
+              <span class="tag" style="background-color: rgba(253, 126, 20, 0.15); color: var(--accent-orange);">SEO</span>
+            </div>
+            <h4 class="font-bold text-lg mb-2" style="color: var(--text-primary);">キーワードリサーチャー</h4>
+            <p class="text-sm mb-4 line-clamp-2" style="color: var(--text-secondary);">トピックを入力すると関連キーワードを一括取得。検索ボリューム推定付き。</p>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="w-7 h-7 rounded-full bg-gradient-to-br from-purple-400 to-pink-500"></div>
+                <span class="text-sm" style="color: var(--text-muted);">佐藤さん</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="text-xs flex items-center gap-1" style="color: var(--text-muted);">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                  </svg>
+                  56人利用
+                </span>
+                <button class="text-xs font-medium flex items-center gap-1" style="color: var(--accent-green);">
+                  使う
+                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </a>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Output List View (Hidden by default) -->
+  <section class="py-8 px-6 hidden" id="list-view">
+    <div class="max-w-7xl mx-auto">
+      <div class="space-y-4">
+        <a href="../detail/output.html" class="card rounded-xl p-4 cursor-pointer flex gap-4 block" style="transition: all 0.3s ease;">
+          <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=400&h=200&fit=crop" alt="AI dashboard" class="w-32 h-20 object-cover rounded-lg flex-shrink-0">
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="tag" style="background-color: rgba(34, 139, 230, 0.15); color: var(--accent-blue); font-size: 0.7rem; padding: 3px 10px; border-radius: 4px;">GPTs</span>
+              <span class="tag" style="background-color: rgba(121, 80, 242, 0.15); color: var(--accent-purple); font-size: 0.7rem; padding: 3px 10px; border-radius: 4px;">デザイン</span>
+            </div>
+            <h4 class="font-bold text-base mb-1" style="color: var(--text-primary);">サムネ職人</h4>
+            <p class="text-sm mb-2 line-clamp-1" style="color: var(--text-secondary);">YouTubeサムネイルのアイデア出しから構成案まで提案。</p>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="w-6 h-6 rounded-full bg-gradient-to-br from-pink-400 to-purple-500"></div>
+                <span class="text-xs" style="color: var(--text-muted);">田中さん</span>
+              </div>
+              <span class="text-xs" style="color: var(--text-muted);">48人利用</span>
+            </div>
+          </div>
+        </a>
+        <a href="../detail/output.html" class="card rounded-xl p-4 cursor-pointer flex gap-4 block" style="transition: all 0.3s ease;">
+          <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=400&h=200&fit=crop" alt="Data analysis" class="w-32 h-20 object-cover rounded-lg flex-shrink-0">
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="tag" style="background-color: rgba(18, 184, 134, 0.15); color: var(--accent-green); font-size: 0.7rem; padding: 3px 10px; border-radius: 4px;">Dify</span>
+              <span class="tag" style="background-color: rgba(253, 126, 20, 0.15); color: var(--accent-orange); font-size: 0.7rem; padding: 3px 10px; border-radius: 4px;">分析</span>
+            </div>
+            <h4 class="font-bold text-base mb-1" style="color: var(--text-primary);">競合ウォッチャー</h4>
+            <p class="text-sm mb-2 line-clamp-1" style="color: var(--text-secondary);">競合のSNS投稿を定期的に収集し、トレンドを分析。</p>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="w-6 h-6 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500"></div>
+                <span class="text-xs" style="color: var(--text-muted);">高橋さん</span>
+              </div>
+              <span class="text-xs" style="color: var(--text-muted);">23人利用</span>
+            </div>
+          </div>
+        </a>
+        <a href="../detail/output.html" class="card rounded-xl p-4 cursor-pointer flex gap-4 block" style="transition: all 0.3s ease;">
+          <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=400&h=200&fit=crop" alt="Browser extension" class="w-32 h-20 object-cover rounded-lg flex-shrink-0">
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="tag" style="background-color: rgba(253, 126, 20, 0.15); color: var(--accent-orange); font-size: 0.7rem; padding: 3px 10px; border-radius: 4px;">Chrome拡張</span>
+              <span class="tag" style="background-color: rgba(230, 73, 128, 0.15); color: var(--accent-pink); font-size: 0.7rem; padding: 3px 10px; border-radius: 4px;">ライティング</span>
+            </div>
+            <h4 class="font-bold text-base mb-1" style="color: var(--text-primary);">リライトアシスト</h4>
+            <p class="text-sm mb-2 line-clamp-1" style="color: var(--text-secondary);">選択したテキストを右クリックでリライト候補を表示。</p>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="w-6 h-6 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500"></div>
+                <span class="text-xs" style="color: var(--text-muted);">山田さん</span>
+              </div>
+              <span class="text-xs" style="color: var(--text-muted);">67人利用</span>
+            </div>
+          </div>
+        </a>
+        <a href="../detail/output.html" class="card rounded-xl p-4 cursor-pointer flex gap-4 block" style="transition: all 0.3s ease;">
+          <img src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=400&h=200&fit=crop" alt="AI meeting tool" class="w-32 h-20 object-cover rounded-lg flex-shrink-0">
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="tag" style="background-color: rgba(34, 139, 230, 0.15); color: var(--accent-blue); font-size: 0.7rem; padding: 3px 10px; border-radius: 4px;">GPTs</span>
+              <span class="tag" style="background-color: rgba(18, 184, 134, 0.15); color: var(--accent-green); font-size: 0.7rem; padding: 3px 10px; border-radius: 4px;">業務効率化</span>
+            </div>
+            <h4 class="font-bold text-base mb-1" style="color: var(--text-primary);">議事録まとめくん</h4>
+            <p class="text-sm mb-2 line-clamp-1" style="color: var(--text-secondary);">会議の文字起こしを入れると、要点・決定事項・TODOを自動抽出。</p>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="w-6 h-6 rounded-full bg-gradient-to-br from-orange-400 to-red-500"></div>
+                <span class="text-xs" style="color: var(--text-muted);">鈴木さん</span>
+              </div>
+              <span class="text-xs" style="color: var(--text-muted);">89人利用</span>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Load More -->
+  <section class="pb-16 px-6">
+    <div class="flex justify-center">
+      <button class="px-8 py-3 text-sm font-medium rounded-lg transition-colors" style="background-color: var(--bg-tertiary); color: var(--text-secondary);">
+        もっと見る
+      </button>
+    </div>
+  </section>
+
+  <!-- Floating Action Button -->
+  <a href="post.html?type=output" class="fixed bottom-8 right-8 w-14 h-14 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform" style="background: linear-gradient(135deg, #12b886 0%, #15aabf 100%);">
+    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+    </svg>
+  </a>
+
+  <script>
+    // ネットワークアニメーション（点と線）
+    class NetworkAnimation {
+      constructor(canvas) {
+        this.canvas = canvas;
+        this.ctx = canvas.getContext('2d');
+        this.nodes = [];
+        this.nodeCount = 60;
+        this.connectionDistance = 150;
+        this.init();
+        this.animate();
+        window.addEventListener('resize', () => this.resize());
+      }
+
+      init() {
+        this.resize();
+        for (let i = 0; i < this.nodeCount; i++) {
+          this.nodes.push({
+            x: Math.random() * this.canvas.width,
+            y: Math.random() * this.canvas.height,
+            vx: (Math.random() - 0.5) * 0.5,
+            vy: (Math.random() - 0.5) * 0.5,
+            radius: Math.random() * 2 + 1
+          });
+        }
+      }
+
+      resize() {
+        const rect = this.canvas.parentElement.getBoundingClientRect();
+        this.canvas.width = rect.width;
+        this.canvas.height = rect.height;
+      }
+
+      getColors() {
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        return {
+          node: isDark ? 'rgba(20, 184, 134, 0.6)' : 'rgba(18, 184, 134, 0.5)',
+          line: isDark ? 'rgba(20, 184, 134, 0.12)' : 'rgba(18, 184, 134, 0.15)'
+        };
+      }
+
+      animate() {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        const colors = this.getColors();
+
+        // Update and draw nodes
+        this.nodes.forEach(node => {
+          node.x += node.vx;
+          node.y += node.vy;
+
+          // Bounce off edges
+          if (node.x < 0 || node.x > this.canvas.width) node.vx *= -1;
+          if (node.y < 0 || node.y > this.canvas.height) node.vy *= -1;
+
+          // Draw node
+          this.ctx.beginPath();
+          this.ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
+          this.ctx.fillStyle = colors.node;
+          this.ctx.fill();
+        });
+
+        // Draw connections
+        for (let i = 0; i < this.nodes.length; i++) {
+          for (let j = i + 1; j < this.nodes.length; j++) {
+            const dx = this.nodes[i].x - this.nodes[j].x;
+            const dy = this.nodes[i].y - this.nodes[j].y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance < this.connectionDistance) {
+              const opacity = 1 - distance / this.connectionDistance;
+              this.ctx.beginPath();
+              this.ctx.moveTo(this.nodes[i].x, this.nodes[i].y);
+              this.ctx.lineTo(this.nodes[j].x, this.nodes[j].y);
+              this.ctx.strokeStyle = colors.line.replace('0.15', (0.15 * opacity).toFixed(2)).replace('0.12', (0.12 * opacity).toFixed(2));
+              this.ctx.lineWidth = 1;
+              this.ctx.stroke();
+            }
+          }
+        }
+
+        requestAnimationFrame(() => this.animate());
+      }
+    }
+
+    // Theme functions
+    function initTheme() {
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      setTheme(savedTheme);
+    }
+
+    function toggleTheme() {
+      const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+      setTheme(newTheme);
+      localStorage.setItem('theme', newTheme);
+    }
+
+    function setTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+
+      const lightIcon = document.getElementById('theme-icon-light');
+      const darkIcon = document.getElementById('theme-icon-dark');
+      const themeText = document.getElementById('theme-text');
+
+      if (theme === 'dark') {
+        lightIcon.classList.add('hidden');
+        darkIcon.classList.remove('hidden');
+        themeText.textContent = 'Dark';
+      } else {
+        lightIcon.classList.remove('hidden');
+        darkIcon.classList.add('hidden');
+        themeText.textContent = 'Light';
+      }
+    }
+
+    // View Toggle
+    function setView(view) {
+      const galleryView = document.getElementById('gallery-view');
+      const listView = document.getElementById('list-view');
+      const galleryBtn = document.getElementById('gallery-view-btn');
+      const listBtn = document.getElementById('list-view-btn');
+      
+      if (view === 'gallery') {
+        galleryView.classList.remove('hidden');
+        listView.classList.add('hidden');
+        galleryBtn.style.backgroundColor = 'var(--accent-green)';
+        galleryBtn.style.color = 'white';
+        listBtn.style.backgroundColor = 'transparent';
+        listBtn.style.color = 'var(--text-muted)';
+      } else {
+        galleryView.classList.add('hidden');
+        listView.classList.remove('hidden');
+        galleryBtn.style.backgroundColor = 'transparent';
+        galleryBtn.style.color = 'var(--text-muted)';
+        listBtn.style.backgroundColor = 'var(--accent-green)';
+        listBtn.style.color = 'white';
+      }
+      localStorage.setItem('viewMode', view);
+    }
+
+    // Initialize
+    initTheme();
+    const savedView = localStorage.getItem('viewMode') || 'gallery';
+    setView(savedView);
+    const canvas = document.getElementById('network-canvas');
+    new NetworkAnimation(canvas);
+  </script>
+
+</body>
+</html>
+
